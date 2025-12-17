@@ -11,11 +11,14 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.141.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tanstack/router-devtools": "^1.141.4",
+    "@tanstack/router-plugin": "^1.141.5",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
