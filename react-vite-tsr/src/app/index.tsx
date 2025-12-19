@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { queryClientConfig } from '@/lib/react-query'
 import { routeTree } from './routeTree.gen'
 
@@ -28,8 +30,23 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Application: router -> routeTree -> src/app/routes/** */}
       <RouterProvider router={router} context={{ queryClient }} />
-      <ReactQueryDevtools />
+
+      {/* Devtools */}
+      <TanStackDevtools
+        plugins={[
+          {
+            name: 'TanStack Query',
+            render: <ReactQueryDevtoolsPanel />,
+            defaultOpen: true,
+          },
+          {
+            name: 'TanStack Router',
+            render: <TanStackRouterDevtoolsPanel router={router} />,
+          },
+        ]}
+      />
     </QueryClientProvider>
   )
 }
