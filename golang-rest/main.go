@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"gitlab.com/siegfriden/project-templates/golang-rest/database/migrations"
 	"gitlab.com/siegfriden/project-templates/golang-rest/setup/env"
 	"gitlab.com/siegfriden/project-templates/golang-rest/setup/postgres"
 	"gitlab.com/siegfriden/project-templates/golang-rest/setup/server"
@@ -22,6 +23,7 @@ func main() {
 	db := connectPostgres(logger, config.postgresURL)
 	defer db.Close()
 
+	runMigrations(logger, db)
 	handler := setupAPIHandler(logger, db)
 	startServer(logger, handler, config.serverPort)
 }
@@ -84,6 +86,24 @@ func connectPostgres(logger *slog.Logger, postgresURL string) *sql.DB {
 		os.Exit(1)
 	}
 	return db
+}
+
+func runMigrations(logger *slog.Logger, db *sql.DB) {
+	// Apply pending database migrations using embedded filesystem.
+	sources, err := postgres.MigrateFS(db, migrations.EmbeddedFS)
+	if err != nil {
+		logger.Error("Database migration failed.", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	// Log migration results.
+	if len(sources) > 0 {
+		for _, source := range sources {
+			logger.Info("Applied database migration.", slog.String("migration_source", source))
+		}
+	} else {
+		logger.Info("Database schema is up-to-date.")
+	}
 }
 
 func setupAPIHandler(logger *slog.Logger, db *sql.DB) http.Handler {

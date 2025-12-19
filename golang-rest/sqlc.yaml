@@ -1,0 +1,22 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./database/queries"
+    schema: "./database/migrations"
+    gen:
+      go:
+        package: "sqlc"
+        out: "./database/sqlc"
+        sql_package: "pgx/v5"
+        overrides:
+          # List of supported db_type:
+          # https://github.com/sqlc-dev/sqlc/blob/main/internal/codegen/golang/postgresql_type.go#L43
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "NullUUID"
+            nullable: true
