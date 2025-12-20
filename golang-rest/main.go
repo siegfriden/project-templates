@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"gitlab.com/siegfriden/project-templates/golang-rest/api/middleware"
 	"gitlab.com/siegfriden/project-templates/golang-rest/database/migrations"
 	"gitlab.com/siegfriden/project-templates/golang-rest/setup/env"
 	"gitlab.com/siegfriden/project-templates/golang-rest/setup/postgres"
@@ -108,7 +109,8 @@ func runMigrations(logger *slog.Logger, db *sql.DB) {
 
 func setupAPIHandler(logger *slog.Logger, db *sql.DB) http.Handler {
 	router := chi.NewRouter()
-	// TODO: Add middlewares (logging, CORS, auth, etc.)
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger(logger))
 
 	router.Route("/v1", func(r chi.Router) {
 		// Public endpoints...
